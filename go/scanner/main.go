@@ -52,6 +52,12 @@ func main() {
 
 	log.Printf("Scanning path: %s", root)
 
+	_, err = os.Stat(root)
+
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+
 	// root := "folder/to/walk" //flag.Arg(0)
 
 	start := time.Now()

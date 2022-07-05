@@ -1,3 +1,8 @@
 
 # ignore data test folder
 data/
+# ignore build folder
+build/
+
+# ignore generated files
+c/scanner/projects/
