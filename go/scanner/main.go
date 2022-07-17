@@ -4,7 +4,6 @@ import (
 	"flag"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"sync"
 	"time"
@@ -40,15 +39,22 @@ func walkDir(dir string) {
 }
 
 func main() {
+
+	var (
+		root string
+		err  error
+	)
+
+	flag.StringVar(&root, "path", "", "path of directory to scan.  Uses current working directory if not provided")
 	flag.Parse()
 
-	wd, err := os.Getwd()
+	if root == "" {
+		root, err = os.Getwd()
 
-	if err != nil {
-		log.Fatalf("%v", err)
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
 	}
-
-	root := path.Join(wd, "..", "..", "data")
 
 	log.Printf("Scanning path: %s", root)
 
@@ -57,8 +63,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
-
-	// root := "folder/to/walk" //flag.Arg(0)
 
 	start := time.Now()
 

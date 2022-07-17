@@ -10,4 +10,7 @@ go-server:
 	@echo "Building Go Server"
 	go build -o ../build/go/go-server server/main.go
 
+run:
+	../build/go/go-scanner --path=../data
+
 all: go-generator go-scanner go-server

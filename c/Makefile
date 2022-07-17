@@ -17,4 +17,7 @@ ifeq (${THIS_OS},linux)
 	make -C ../projects c-scanner config=release_linux64
 endif
 
+run:
+	../build/c/c-scanner ../data
+
 all: c-scanner-gen c-scanner
