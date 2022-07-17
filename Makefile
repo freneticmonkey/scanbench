@@ -1,5 +1,4 @@
 
-
 go-all:
 	make -C go all
 

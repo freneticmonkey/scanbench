@@ -54,14 +54,14 @@ workspace "scanner"
 
 solution "scanner"
    filename "scanner"
-   location "projects"
+   location "../../projects"
 
    startproject "c-scanner"
 
    project "c-scanner"
    kind "ConsoleApp"
    language "C"
-   targetdir( "build/c" )
+   targetdir( "../../build/c" )
    debugargs { "" }
    debugdir "."
 
@@ -69,7 +69,7 @@ solution "scanner"
       links {}
 
       libdirs {
-        "build"
+        "../../build/c"
       }
 
       sysincludedirs {
