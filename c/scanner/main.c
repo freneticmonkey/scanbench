@@ -1,57 +1,42 @@
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/dir.h>
-#include <sys/param.h>
-#include <unistd.h>
- 
-extern  int alphasort();
- 
-char pathname[MAXPATHLEN];
-char item_type;
+#include <stdbool.h>
 
-int file_select(const struct direct *entry)
+#include "process_files.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#define MAXPATHLEN 260
+#define getwd GetCurrentDirectory
+#endif
+
+char pathname[MAXPATHLEN];
+
+bool get_cwd(char* pathname)
 {
-    if ((strcmp(entry->d_name, ".") == 0) || (strcmp(entry->d_name, "..") == 0))
-        return 0;
-    else
-        return 1;
+#ifdef _WIN32
+    return (getwd(MAXPATHLEN, &pathname) > 0);
+#else
+    return getwd(pathname) != NULL;
+#endif
+    return false;
 }
 
-int main(int argc, char *argv[])
-{ 
-    int count, i = 0;
-    struct direct **files;
 
+int main(int argc, char *argv[])
+{
     // if a path has been supplied
     if (argc == 2)
     {
         strncpy(pathname, argv[1], MAXPATHLEN);
     }
-    else if (getwd(pathname) == NULL )
-    { 
+    else if (!get_cwd(&pathname))
+    {
         printf("Error determining the current working path\n");
         exit(0);
     }
 
-    printf("Current Working Directory = %s\n",pathname);
-    count = scandir(pathname, &files, file_select, alphasort);
-
-    if (count <= 0)
-    {		 
-        printf("No files in this directory\n");
-        exit(0);
-    }
-    printf("Number of files = %d\n",count);
-    for (i=1; i < count+1; ++i)
-    {
-        struct direct *file = files[i-1];
-        item_type = (file->d_type & DT_DIR) ? 'd' : 'f';
-        printf("%c  %s  \n",item_type, file->d_name);
-    }
-    printf("\n"); /* flush buffer */
+    // This will be compile to a platform specific implementation
+    ProcessFiles(pathname);
 
     return 0;
 }

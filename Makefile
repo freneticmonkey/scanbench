@@ -13,6 +13,9 @@ c-run:
 
 all: go-all c-all
 
+generate-data:
+	make -C go generate
+
 run: c-run go-run
 	
 

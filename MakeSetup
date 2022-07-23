@@ -5,8 +5,8 @@ BUILD_TIME=$(shell date)
 THIS_OS=windows
 THIS_ARCH=x86
 
-TOOL_PATH=..\tools\windows\x86
-TOOL_BUILD=vs2019
+TOOL_PATH=..\tools\win\x86
+TOOL_BUILD=vs2022
 TOOL_PLATFORM=windows
 
 ifeq ($(OS),Windows_NT)

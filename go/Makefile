@@ -13,4 +13,7 @@ go-server:
 run:
 	../build/go/go-scanner --path=../data
 
+generate:
+	../build/go/go-generator
+
 all: go-generator go-scanner go-server

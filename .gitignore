@@ -1,3 +1,5 @@
+#ignore vscode folder for now
+.vscode/
 
 # ignore data test folder
 data/

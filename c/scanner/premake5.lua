@@ -82,7 +82,7 @@ solution "scanner"
 
       files { 
         "**.h",
-        "**.c"
+        "main.c"
       }
 
     -- enable tracing for debug builds
@@ -94,8 +94,14 @@ solution "scanner"
    filter { "system:linux"}
       libdirs {}
       links {}
+      files {
+         "posix.c"
+      }
 
    filter { "system:windows" }
+      files {
+         "windows.c"
+      }
       defines {
          "_CRT_SECURE_NO_WARNINGS"
       }
@@ -107,6 +113,10 @@ solution "scanner"
 
    filter { "system:macosx"}
       links {}
+
+      files {
+         "windows.c"
+      }
 
       filter "files:c/scanner/main.c"
          compileas "Objective-C"
