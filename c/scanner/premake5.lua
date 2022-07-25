@@ -58,7 +58,41 @@ solution "scanner"
 
    startproject "c-scanner"
 
-   project "c-scanner"
+project "libdill"
+   kind "SharedLib"
+   language "C"
+   targetdir( "../../build/c" )
+
+   objdir "../../build/c/obj"
+   
+   includedirs {
+      "c/ext/libdill-2.14"
+   }
+
+   filter { "system:linux or macosx" }
+      files {
+         "../ext/libdill-2.14/dns/*",
+         "../ext/libdill-2.14/perf/*",
+         "../ext/libdill-2.14/*.h",
+         "../ext/libdill-2.14/*.c",
+         "../ext/libdill-2.14/*.inc"
+      }
+   
+   -- filter "configurations:Debug"
+   --    defines { "DEBUG" }
+   --    symbols "On"
+   --    links {
+   --       "scanner-lib-d"
+   --    }
+   -- filter "configurations:Release"
+   --    defines { "NDEBUG" }
+   --    optimize "On"
+   --    links {
+   --       "scanner-lib"
+   --    }
+   -- filter {}
+
+project "c-scanner"
    kind "ConsoleApp"
    language "C"
    targetdir( "../../build/c" )
@@ -66,7 +100,7 @@ solution "scanner"
    debugdir "."
 
    filter {}
-      links {}
+      
 
       libdirs {
         "../../build/c"
@@ -93,7 +127,9 @@ solution "scanner"
    
    filter { "system:linux"}
       libdirs {}
-      links {}
+      links {
+         "libdill"
+      }
       files {
          "posix.c"
       }
@@ -112,7 +148,9 @@ solution "scanner"
       editAndContinue "Off"
 
    filter { "system:macosx"}
-      links {}
+      links {
+         "libdill"
+      }
 
       files {
          "windows.c"
