@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <time.h>
 
 #include "process_files.h"
 
@@ -35,8 +37,22 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
+    clock_t begin = clock();
+    
     // This will be compile to a platform specific implementation
-    ProcessFiles(pathname);
+    long file_count = ProcessFiles(pathname);
 
-    return 0;
+    clock_t end = clock();
+
+    if (file_count == -1)
+    {
+        printf("Error while searching the file count. Error: %llu\n", file_count);
+        exit(0);
+    }
+
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
+    printf("The search ran in %f seconds", time_spent);
+
+    printf("Files Found: %llu\n", file_count);
 }
