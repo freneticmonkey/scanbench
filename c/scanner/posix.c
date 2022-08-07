@@ -25,7 +25,7 @@ int file_select(const struct direct *entry)
         return 1;
 }
 
-int ProcessFiles(const char * pathname)
+long ProcessFiles(const char * pathname)
 {
     int count, i = 0;
     struct direct **files;
@@ -38,14 +38,26 @@ int ProcessFiles(const char * pathname)
         printf("No files in this directory\n");
         exit(0);
     }
-    printf("Number of files = %d\n", count);
+    int file_count = 0;
     for (i = 1; i < count + 1; ++i)
     {
         struct direct *file = files[i - 1];
         item_type = (file->d_type & DT_DIR) ? 'd' : 'f';
-        printf("%c  %s  \n", item_type, file->d_name);
+        if ( file->d_type & DT_DIR )
+        {
+            printf("%c  %s  \n", item_type, file->d_name);
+            char new_path[MAXPATHLEN];
+            sprintf(new_path, "%s/%s", pathname, file->d_name);
+            file_count += ProcessFiles(new_path);
+        }
+        else
+        {
+            file_count++;
+        }
     }
+    printf("Number of files = %d\n", file_count);
+
     printf("\n"); /* flush buffer */
 
-    return 0;
+    return file_count;
 }

@@ -8,6 +8,9 @@ go-run:
 c-all:
 	make -C c all
 
+c-all-debug:
+	make -C c all-debug
+
 c-run:
 	make -C c run
 

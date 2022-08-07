@@ -5,9 +5,10 @@
 
 #include "process_files.h"
 
+#define MAXPATHLEN 260
+
 #ifdef _WIN32
 #include <windows.h>
-#define MAXPATHLEN 260
 #define getwd GetCurrentDirectory
 #endif
 
@@ -18,7 +19,7 @@ bool get_cwd(char* pathname)
 #ifdef _WIN32
     return (getwd(MAXPATHLEN, &pathname) > 0);
 #else
-    return getwd(pathname) != NULL;
+    return getcwd(pathname, MAXPATHLEN) != NULL;
 #endif
     return false;
 }

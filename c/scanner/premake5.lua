@@ -72,7 +72,7 @@ project "libdill"
    filter { "system:linux or macosx" }
       files {
          "../ext/libdill-2.14/dns/*",
-         "../ext/libdill-2.14/perf/*",
+         -- "../ext/libdill-2.14/perf/*",
          "../ext/libdill-2.14/*.h",
          "../ext/libdill-2.14/*.c",
          "../ext/libdill-2.14/*.inc"
@@ -128,7 +128,10 @@ project "c-scanner"
    filter { "system:linux"}
       libdirs {}
       links {
-         "libdill"
+         "libdill",
+         -- note, when building openssl /usr/local/lib64 needs to be added to /etc/ld.so.conf.d/libc.conf
+         "ssl",
+         "crypto"
       }
       files {
          "posix.c"
