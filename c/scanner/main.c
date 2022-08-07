@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-    printf("The search ran in %f seconds", time_spent);
+    printf("The search ran in %f seconds\n", time_spent);
 
     printf("Files Found: %llu\n", file_count);
 }
