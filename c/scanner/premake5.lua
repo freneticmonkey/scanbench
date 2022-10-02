@@ -58,7 +58,7 @@ solution "scanner"
 
    startproject "c-scanner"
 
-project "libdill"
+project "dill"
    kind "SharedLib"
    language "C"
    targetdir( "../../build/c" )
@@ -77,6 +77,23 @@ project "libdill"
          "../ext/libdill-2.14/*.c",
          "../ext/libdill-2.14/*.inc"
       }
+   
+   filter { "system:macosx" } 
+      sysincludedirs {
+         "/opt/homebrew/opt/openssl@3/include"
+      }
+      libdirs {
+         "/opt/homebrew/opt/openssl@3/lib"
+      }
+
+      linkoptions {
+         "-lssl",
+         "-lcrypto",
+      }
+      -- links {
+      --    "ssl",
+      --    "crypto"
+      -- }
    
    -- filter "configurations:Debug"
    --    defines { "DEBUG" }
@@ -100,8 +117,6 @@ project "c-scanner"
    debugdir "."
 
    filter {}
-      
-
       libdirs {
         "../../build/c"
       }
@@ -124,11 +139,11 @@ project "c-scanner"
     --   defines {
     --      "TRACY_ENABLE"
     --   }
-   
-   filter { "system:linux"}
+      
+   if os.host() == "linux" then
       libdirs {}
       links {
-         "libdill",
+         "dill",
          -- note, when building openssl /usr/local/lib64 needs to be added to /etc/ld.so.conf.d/libc.conf
          "ssl",
          "crypto"
@@ -137,7 +152,7 @@ project "c-scanner"
          "posix.c"
       }
 
-   filter { "system:windows" }
+   elseif os.host() == "windows" then
       files {
          "windows.c"
       }
@@ -150,14 +165,14 @@ project "c-scanner"
       -- Turn off edit and continue
       editAndContinue "Off"
 
-   filter { "system:macosx"}
-      links {
-         "libdill"
-      }
-
+   elseif os.host() == "macosx" then
       files {
-         "windows.c"
+         "posix.c"
       }
-
+      links {
+         "dill"
+      }
       filter "files:c/scanner/main.c"
          compileas "Objective-C"
+   end
+      

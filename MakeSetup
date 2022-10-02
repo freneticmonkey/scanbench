@@ -4,6 +4,7 @@ BUILD_TIME=$(shell date)
 
 THIS_OS=windows
 THIS_ARCH=x86
+BUILD_ARCH=x86_64
 
 TOOL_PATH=..\tools\win\x86
 TOOL_BUILD=vs2022
@@ -26,6 +27,9 @@ ifeq (${THIS_OS},darwin)
 	TOOL_BUILD=xcode4
 	TOOL_PATH=../tools/osx/x86
 	TOOL_PLATFORM=macosx
+	ifeq (${THIS_ARCH},arm64)
+		BUILD_ARCH=arm64
+	endif
 endif
 ifeq (${THIS_OS},linux)
 	TOOL_BUILD=gmake
@@ -34,6 +38,7 @@ ifeq (${THIS_OS},linux)
 	ifeq (${THIS_ARCH},aarch64)
 		TOOL_PATH=../tools/unix/arm
 		TOOL_PLATFORM=linuxARM64
+		BUILD_ARCH=aarch64
 	endif
 endif
 

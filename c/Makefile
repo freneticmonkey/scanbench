@@ -17,7 +17,7 @@ ifeq (${THIS_OS},windows)
 	msbuild.exe ../projects/scanner.sln -p:Platform="windows";Configuration=Release -target:c-scanner
 endif
 ifeq (${THIS_OS},darwin)
-	xcodebuild -configuration "Release" ARCHS="x86_64" -destination 'platform=macOS' -project "../projects/c-scanner.xcodeproj" -target c-scanner
+	xcodebuild -configuration "Release" ARCHS="${BUILD_ARCH}" -destination 'platform=macOS' -project "../projects/c-scanner.xcodeproj" -target c-scanner
 endif
 ifeq (${THIS_OS},linux)
 	make -C ../projects c-scanner config=release_linux64
@@ -29,7 +29,7 @@ ifeq (${THIS_OS},windows)
 	msbuild.exe ../projects/scanner.sln -p:Platform="windows";Configuration=Debug -target:c-scanner
 endif
 ifeq (${THIS_OS},darwin)
-	xcodebuild -configuration "Debug" ARCHS="x86_64" -destination 'platform=macOS' -project "../projects/c-scanner.xcodeproj" -target c-scanner
+	xcodebuild -configuration "Debug" ARCHS="${BUILD_ARCH}" -destination 'platform=macOS' -project "../projects/c-scanner.xcodeproj" -target c-scanner
 endif
 ifeq (${THIS_OS},linux)
 	make -C ../projects c-scanner config=debug_linux64

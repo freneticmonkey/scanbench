@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
 
 #include "process_files.h"
 
@@ -10,6 +11,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #define getwd GetCurrentDirectory
+#else
+#include <unistd.h>
 #endif
 
 char pathname[MAXPATHLEN];
@@ -32,7 +35,7 @@ int main(int argc, char *argv[])
     {
         strncpy(pathname, argv[1], MAXPATHLEN);
     }
-    else if (!get_cwd(&pathname))
+    else if (!get_cwd(&pathname[0]))
     {
         printf("Error determining the current working path\n");
         exit(0);
@@ -47,7 +50,7 @@ int main(int argc, char *argv[])
 
     if (file_count == -1)
     {
-        printf("Error while searching the file count. Error: %llu\n", file_count);
+        printf("Error while searching the file count. Error: %lu\n", file_count);
         exit(0);
     }
 
