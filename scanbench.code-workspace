@@ -6,7 +6,7 @@
 	],
 	"settings": {
 		"files.watcherExclude": {
-			"data/**": true
+			"**/data/**": true
 		  }
 		
 	}

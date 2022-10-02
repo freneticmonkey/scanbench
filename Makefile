@@ -11,6 +11,9 @@ go-run-prof:
 c-all:
 	make -C c all
 
+c-all-debug:
+	make -C c all-debug
+
 c-run:
 	make -C c run
 
@@ -21,6 +24,9 @@ v-run:
 	make -C v run
 
 all: go-all c-all v-all
+
+generate-data:
+	make -C go generate
 
 run: c-run go-run v-run
 	

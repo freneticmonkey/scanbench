@@ -16,4 +16,7 @@ run:
 run-prof:
 	../build/go/go-scanner --path=../data --cpu-profile=cpu.prof --trace=trace.prof
 
+generate:
+	../build/go/go-generator
+
 all: go-generator go-scanner go-server
