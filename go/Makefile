@@ -4,7 +4,7 @@ go-generator:
 
 go-scanner:
 	@echo "Building Go Scanner"
-	go build -o ../build/go/go-scanner scanner/main.go
+	GOARCH=arm64 go build -o ../build/go/go-scanner scanner/main.go
 
 go-server:
 	@echo "Building Go Server"
@@ -12,5 +12,8 @@ go-server:
 
 run:
 	../build/go/go-scanner --path=../data
+
+run-prof:
+	../build/go/go-scanner --path=../data --cpu-profile=cpu.prof --trace=trace.prof
 
 all: go-generator go-scanner go-server
