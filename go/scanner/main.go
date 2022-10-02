@@ -30,7 +30,8 @@ func walkDir(ctx context.Context, dir string) {
 
 	visitDir := func(path string, d fs.DirEntry, err error) error {
 		if d.IsDir() && path != dir {
-			go walkDir(ctx, path)
+			// go walkDir(ctx, path)
+			walkDir(ctx, path)
 			return filepath.SkipDir
 		}
 
@@ -43,9 +44,9 @@ func walkDir(ctx context.Context, dir string) {
 
 	filepath.WalkDir(dir, visitDir)
 
-	num_files_mut.Lock()
+	// num_files_mut.Lock()
 	num_files += file_count
-	num_files_mut.Unlock()
+	// num_files_mut.Unlock()
 }
 
 func main() {
