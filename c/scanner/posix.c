@@ -30,13 +30,13 @@ long ProcessFiles(const char * pathname)
     int count, i = 0;
     struct direct **files;
 
-    printf("Current Working Directory = %s\n", pathname);
+    // printf("Current Working Directory = %s\n", pathname);
     count = scandir(pathname, &files, file_select, alphasort);
 
     if (count <= 0)
     {
-        printf("No files in this directory\n");
-        exit(0);
+        // printf("No files in this directory\n");
+        return 0;
     }
     int file_count = 0;
     for (i = 1; i < count + 1; ++i)
@@ -45,7 +45,7 @@ long ProcessFiles(const char * pathname)
         item_type = (file->d_type & DT_DIR) ? 'd' : 'f';
         if ( file->d_type & DT_DIR )
         {
-            printf("%c  %s  \n", item_type, file->d_name);
+            // printf("%c  %s  \n", item_type, file->d_name);
             char new_path[MAXPATHLEN];
             sprintf(new_path, "%s/%s", pathname, file->d_name);
             file_count += ProcessFiles(new_path);
@@ -55,9 +55,8 @@ long ProcessFiles(const char * pathname)
             file_count++;
         }
     }
-    printf("Number of files = %d\n", file_count);
-
-    printf("\n"); /* flush buffer */
+    // printf("Number of files = %d\n", file_count);
+    fflush(stdout);
 
     return file_count;
 }
