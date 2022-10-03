@@ -2,14 +2,17 @@
 go-all:
 	make -C go all
 
+go-build:
+	make -C go go-scanner
+
 go-run:
 	make -C go run
 
 go-run-prof:
 	make -C go run-prof
 
-c-all:
-	make -C c all
+c-build:
+	make -C c c-scanner
 
 c-all-debug:
 	make -C c all-debug
@@ -17,23 +20,28 @@ c-all-debug:
 c-run:
 	make -C c run
 
-v-all:
-	make -C v all
+v-build:
+	make -C v v-scanner
 
 v-run:
 	make -C v run
 
-zig-all:
-	make -C zig all
+zig-build:
+	make -C zig zig-scanner
 
 zig-run:
 	make -C zig run
 
-all: go-all c-all v-all
+rust-build:
+	make -C rust rust-scanner
 
+rust-run:
+	make -C rust run
+
+build-all: go-build c-build v-build zig-build rust-build
+
+run-all: c-run go-run v-run zig-run rust-run
+	
 generate-data:
 	make -C go generate
-
-run: c-run go-run v-run
-	
 

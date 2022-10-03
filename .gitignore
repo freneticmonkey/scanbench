@@ -12,4 +12,8 @@ projects/
 # ignore profiles
 *.prof
 
+# ignore .DS_Store
 .DS_Store
+
+# ignore rust artifacts
+rust/scanner/target/
