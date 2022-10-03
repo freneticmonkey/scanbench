@@ -23,6 +23,12 @@ v-all:
 v-run:
 	make -C v run
 
+zig-all:
+	make -C zig all
+
+zig-run:
+	make -C zig run
+
 all: go-all c-all v-all
 
 generate-data:
