@@ -63,11 +63,17 @@ func generate_file(wg *sync.WaitGroup, pwd string, base rune) error {
 }
 
 func main() {
+
+	var seed int64
+
 	cwd, err := os.Getwd()
 
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
+
+	seed = 1665113341816724000
+	rand.Seed(seed)
 
 	lorum_ipsum_bytes = []byte(lorum_ipsum)
 	lorum_ipsum_len = len(lorum_ipsum_bytes)
