@@ -85,6 +85,8 @@ func main() {
 		defer trace.Stop()
 	}
 
+	log.Printf("Starting Go Scan")
+
 	if root == "" {
 		root, err = os.Getwd()
 
@@ -111,7 +113,7 @@ func main() {
 
 	elapsed := time.Since(start)
 
-	log.Printf("Go filewalk took: %s", elapsed)
-	log.Printf("Num files read:   %d", num_files)
 	log.Println("Num files expected: 1048576")
+	log.Printf("Total files:   %d", num_files)
+	log.Printf("Time Elapsed: %s", elapsed)
 }

@@ -48,23 +48,25 @@ fn main() {
 
 	folder := "data"
 	
+	println("Starting V Scan")
+	println("Path: $folder")
 	
-	if false {
-		println("Walk Scanning: $folder")
 
-		start := time.now()
+	println("Walk Scan")
 
-		path_scan(folder, mut &file_count, true)
+	start := time.now()
 
-		elapsed := time.since(start)
+	path_scan(folder, mut &file_count, true)
 
-		println("Walk Scan completed in: $elapsed")
-		println("Found file count: $file_count")
-		println("")
-		file_count = 0
-	}
+	elapsed := time.since(start)
 
-	println("Concurrent Scanning: $folder")
+	println("Walk Scan completed in: $elapsed")
+	println("Found file count: $file_count")
+	println("")
+	file_count = 0
+
+
+	println("Parallel Scan")
 
 	c_start := time.now()
 

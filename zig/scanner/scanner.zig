@@ -70,5 +70,6 @@ pub fn main() !void {
     const elapsed = std.time.milliTimestamp() - time;
 
     // display elapsed time
-    try stdout.print("Found {} files in {}ms\n", .{count, elapsed});
+    try stdout.print("Total Files: {}\n", .{count});
+    try stdout.print("Time Elapsed: {}ms\n", .{elapsed});
 }
