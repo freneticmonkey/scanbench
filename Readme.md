@@ -30,3 +30,12 @@ Total Files: 1048576
 | Rust - Walk* | 1694ms |
 
 \* The rust implementation is using walkdir for Walk and work-queue for Parallel.  The walkdir implementation is using the default settings for the walker, while the work-queue implementation is using 10 threads.
+
+
+## Setup notes
+
+Build the Go tooling and generate the data set
+    `make setup`
+
+Run the tests
+    `make run-all`

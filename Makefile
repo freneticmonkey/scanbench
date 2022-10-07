@@ -45,3 +45,5 @@ run-all: c-run go-run v-run zig-run rust-run
 generate-data:
 	make -C go generate
 
+setup: go-all generate-data
+	
