@@ -31,6 +31,14 @@ Total Files: 1048576
 
 \* The rust implementation is using walkdir for Walk and work-queue for Parallel.  The walkdir implementation is using the default settings for the walker, while the work-queue implementation is using 10 threads.
 
+## Implementation Notes
+
+### Go
+
+I originally implemented using filepath.Walk, then switched to filepath.WalkDir which was added in go 1.16 and significantly faster as it avoids calling Lstat on every file.  I haven't looked into how this is implemented but I expect that the other tested languages which are signficantly slower would benefit from a similar optimisation.  I also experimented with using goroutines to parallelise the walk, but this was slower than the current implementation using WalkDir and iterating.  In addition I was able to do some high level profiling which clearly showed that the majority of the time was spent in the Lstat call.
+
+
+
 
 ## Setup notes
 
