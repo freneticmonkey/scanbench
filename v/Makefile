@@ -4,6 +4,6 @@ v-scanner:
 	v -o ../build/v/v-scanner scanner/scanner.v
 
 run:
-	../build/v/v-scanner --path=../data
+	../build/v/v-scanner
 
 all: v-scanner

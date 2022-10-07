@@ -8,9 +8,7 @@ fn path_scan(path string, mut file_count &int, do_walk bool) {
 	
 	if do_walk {
 		visit := fn [mut file_count] (path string) {
-			// println(path)
 			if os.is_dir(path) {
-				
 			} else {
 				(*file_count)++
 			}
@@ -46,7 +44,7 @@ fn path_scan(path string, mut file_count &int, do_walk bool) {
 fn main() {
 	mut file_count := 0
 
-	folder := "data"
+	folder := "../../data"
 	
 	println("Starting V Scan")
 	println("Path: $folder")
