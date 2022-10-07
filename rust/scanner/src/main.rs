@@ -2,10 +2,12 @@ use std::env;
 use std::fs;
 use std::time::Instant;
 
-// use std::sync::Mutex;
-// use std::sync::Arc;
-// use work_queue::{Queue, LocalQueue};
-// static NTHREADS: usize = 10;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use work_queue::{Queue};
+use walkdir::WalkDir;
+
+static NTHREADS: usize = 10;
 
 fn linear(dir: String) -> u64 {
     let mut total_files: u64 = 0;
@@ -37,58 +39,68 @@ fn linear(dir: String) -> u64 {
     return total_files;
 }
 
-// fn processFolder(folder: String, queue: &Queue<String>) -> u64 {
-//     let mut total_files: u64 = 0;
-//     let mut dir = match fs::read_dir(folder) {
-//         Ok(dir) => dir,
-//         Err(_) => return 0,
-//     };
-//     while let Some(entry) = dir.next() {
-//         let entry = match entry {
-//             Ok(entry) => entry,
-//             Err(_) => continue,
-//         };
-//         let path = entry.path();
-//         if path.is_dir() {
-//             let path_str = path.to_str().unwrap().to_string();
-//             queue.push(path_str);
-//         } else {
-//             total_files += 1;   
-//         }
-//     }
-//     return total_files;
-// }
+fn walk(dir:String) -> u64 {
 
-// fn parallel(dir: String) -> u64 {
-//     // let mut total_files: u64 = 0;
-//     let total_files = Arc::new(Mutex::new(0));
+    // use walkdir::WalkDir to walk the directory
+    let mut total_files: u64 = 0;
+    for entry in WalkDir::new(dir) {
+        let entry = match entry {
+            Ok(entry) => entry,
+            Err(_) => continue,
+        };
+        if entry.file_type().is_file() {
+            total_files += 1;
+        }
+    }
 
-//     // create a queue and enqueue the root path
-//     let queue: Queue<String> = Queue::new(NTHREADS, 128);
-//     queue.push(dir);
+    return total_files;
+}
 
-//     // Spawn threads to complete the tasks.
-//     let handles: Vec<_> = queue
-//         .local_queues()
-//         .map(|mut local_queue| {
-//             std::thread::spawn(move || {
-//                 while let Some(path) = local_queue.pop() {
-//                     let found_files: u64 = processFolder(path, &queue);
+fn parallel(dir: String) -> usize {
+    let total_files = Arc::new(AtomicUsize::new(0));
 
-//                     // atomically increment the total number of files
-//                     let mut total_files = total_files.lock().unwrap();
-//                     *total_files += found_files
-//                 }
-//             })
-//         })
-//         .collect();
+    // create a queue and enqueue the root path
+    let queue = Queue::<String>::new(NTHREADS, 128);
+    queue.push(dir);
 
-//     for handle in handles {
-//         handle.join().unwrap();
-//     }
+    // Spawn threads to complete the tasks.
+    let handles: Vec<_> = queue
+        .local_queues()
+        .map(|mut local_queue| {
+            let count = total_files.clone();
 
-//     return total_files.lock().unwrap().clone();
-// }
+            std::thread::spawn(move || {
+                while let Some(path) = local_queue.pop() {
+                    
+                    let mut dir = match fs::read_dir(path) {
+                        Ok(dir) => dir,
+                        Err(_) => continue,
+                    };
+
+                    while let Some(entry) = dir.next() {
+                        let entry = match entry {
+                            Ok(entry) => entry,
+                            Err(_) => continue,
+                        };
+                        let path = entry.path();
+                        if path.is_dir() {
+                            let path_str = path.to_str().unwrap().to_string();
+                            local_queue.push(path_str);
+                        } else {
+                            count.fetch_add(1, Ordering::SeqCst);
+                        }
+                    }
+                }
+            })
+        })
+        .collect();
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    return total_files.load(Ordering::SeqCst);
+}
 
 // read a path parameter and scan it for files
 // and directories
@@ -98,16 +110,41 @@ fn main() {
     let path = &args[1];
     
     
+    println!("Linear Scan");
     // get current time
-    let start = Instant::now();
-
-    let total_files: u64 = linear(path.to_string());
+    let mut start = Instant::now();
+    let mut total_files: u64 = linear(path.to_string());
 
     // Get elapsed time
-    let elapsed = start.elapsed();
+    let mut elapsed = start.elapsed();
+
+    println!("Total Files: {}", total_files);
+    println!("Time Elapsed: {}ms", elapsed.as_millis());
+    println!("");
+
+    println!("Parallel Scan");
+
+    // get current time
+    let parallel_start = Instant::now();
+    let parallel_files: usize = parallel(path.to_string());
+
+    // Get elapsed time
+    let parallel_elapsed = parallel_start.elapsed();
 
     // print results
-    println!("Total files: {}", total_files);
-    // print time taken
-    println!("Time taken: {}ms", elapsed.as_millis());
+    println!("Total Files: {}", parallel_files);
+    println!("Time Elapsed: {}ms", parallel_elapsed.as_millis());
+    println!("");
+
+    println!("Walk Scan");
+    // get current time
+    start = Instant::now();
+    total_files = walk(path.to_string());
+
+    // Get elapsed time
+    elapsed = start.elapsed();
+
+    println!("Total Files: {}", total_files);
+    println!("Time Elapsed: {}ms", elapsed.as_millis());
+    println!("");
 }
