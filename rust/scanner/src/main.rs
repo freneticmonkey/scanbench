@@ -1,9 +1,10 @@
-use std::env;
 use std::fs;
 use std::time::Instant;
 
+use clap::Parser;
+
 use std::sync::Arc;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicU64, Ordering};
 use work_queue::{Queue};
 use walkdir::WalkDir;
 
@@ -27,7 +28,8 @@ fn linear(dir: String) -> u64 {
                 Err(_) => continue,
             };
             let path = entry.path();
-            if path.is_dir() {
+            let ft = entry.file_type().unwrap();
+            if ft.is_dir() {
                 let path_str = path.to_str().unwrap().to_string();
                 stack.push(path_str);
             } else {
@@ -38,6 +40,7 @@ fn linear(dir: String) -> u64 {
 
     return total_files;
 }
+
 
 fn walk(dir:String) -> u64 {
 
@@ -56,8 +59,8 @@ fn walk(dir:String) -> u64 {
     return total_files;
 }
 
-fn parallel(dir: String) -> usize {
-    let total_files = Arc::new(AtomicUsize::new(0));
+fn parallel(dir: String) -> u64 {
+    let total_files = Arc::new(AtomicU64::new(0));
 
     // create a queue and enqueue the root path
     let queue = Queue::<String>::new(NTHREADS, 128);
@@ -102,49 +105,53 @@ fn parallel(dir: String) -> usize {
     return total_files.load(Ordering::SeqCst);
 }
 
+#[derive(Parser)]
+struct Opts {
+    #[clap(short, long)]
+    path: String,
+    #[clap(short, long)]
+    mode: String,
+}   
+
+fn run_scan(name: String, f: fn(String) -> u64, path:String) {
+    println!("{} Scan", name);
+            // get current time
+            let start = Instant::now();
+            let total_files: u64 = f(path);
+
+            // Get elapsed time
+            let elapsed = start.elapsed();
+
+            println!("Total Files: {}", total_files);
+            println!("Time Elapsed: {}ms", elapsed.as_millis());
+            println!("");
+}
+
 // read a path parameter and scan it for files
 // and directories
 fn main() {
+
+    let args = Opts::parse();   
+
     println!("Starting Rust Scan");
-    let args: Vec<String> = env::args().collect();
-    let path = &args[1];
-    
-    
-    println!("Linear Scan");
-    // get current time
-    let mut start = Instant::now();
-    let mut total_files: u64 = linear(path.to_string());
+    // let args: Vec<String> = env::args().collect();
+    let path = args.path.to_string();
 
-    // Get elapsed time
-    let mut elapsed = start.elapsed();
-
-    println!("Total Files: {}", total_files);
-    println!("Time Elapsed: {}ms", elapsed.as_millis());
-    println!("");
-
-    println!("Parallel Scan");
-
-    // get current time
-    let parallel_start = Instant::now();
-    let parallel_files: usize = parallel(path.to_string());
-
-    // Get elapsed time
-    let parallel_elapsed = parallel_start.elapsed();
-
-    // print results
-    println!("Total Files: {}", parallel_files);
-    println!("Time Elapsed: {}ms", parallel_elapsed.as_millis());
-    println!("");
-
-    println!("Walk Scan");
-    // get current time
-    start = Instant::now();
-    total_files = walk(path.to_string());
-
-    // Get elapsed time
-    elapsed = start.elapsed();
-
-    println!("Total Files: {}", total_files);
-    println!("Time Elapsed: {}ms", elapsed.as_millis());
-    println!("");
+    match args.mode.as_str() {
+        "linear"=> {
+            run_scan("Linear".to_string(), linear, path);
+        },
+        "parallel"=> {
+            run_scan("Parallel".to_string(), parallel, path);
+        },
+        "walk"=> {
+            run_scan("Walk".to_string(), walk, path);
+        },
+        _ => {
+            println!("Running all scans");
+            run_scan("Linear".to_string(), linear, path.clone());
+            run_scan("Parallel".to_string(), parallel, path.clone());
+            run_scan("Walk".to_string(), walk, path.clone());
+        }
+    }
 }

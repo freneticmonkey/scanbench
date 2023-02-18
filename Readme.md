@@ -25,9 +25,10 @@ Total Files: 1048576
 | Go | 843 ms |
 | V - Walk | 26099 ms |
 | V - Parallel | 11865 ms |
-| Rust - Linear | 26897ms |
-| Rust - Parallel* | 6238ms |
-| Rust - Walk* | 1694ms |
+| Rust - Linear - old debug | 26897ms |
+| Rust - Linear Optimised (no file stat) | 672ms |
+| Rust - Parallel* | 355ms |
+| Rust - Walk* | 717ms |
 
 \* The rust implementation is using walkdir for Walk and work-queue for Parallel.  The walkdir implementation is using the default settings for the walker, while the work-queue implementation is using 10 threads.
 
