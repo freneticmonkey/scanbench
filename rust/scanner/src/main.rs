@@ -86,7 +86,7 @@ fn parallel(dir: String) -> u64 {
                             Err(_) => continue,
                         };
                         let path = entry.path();
-                        if path.is_dir() {
+                        if entry.file_type().unwrap().is_dir() {
                             let path_str = path.to_str().unwrap().to_string();
                             local_queue.push(path_str);
                         } else {
